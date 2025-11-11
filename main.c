@@ -5,7 +5,7 @@
 
 
 int main () {
-	printf("Sistema de Atendimento\n");
+	printf("Sistema de Atendimentos\n");
 	Fila* fila = nova_fila();
 	Heap* heap = new_heap();
 
