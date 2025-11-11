@@ -2,7 +2,7 @@
 #include "pessoa.h"
 #include "./fila.c"
 #include "./heap.c"
-
+#include <stdlib.h>
 
 int main () {
 	printf("Sistema de Atendimentos\n");
@@ -85,6 +85,7 @@ int main () {
 			default:
 				printf("Opção inválida. Tente novamente.\n");
 		}
+		system("clear");
 	}
 
 end:
