@@ -75,6 +75,7 @@ NodeLista * lista_pop(NodeLista ** head, void * needle, int (*cmp)(void* d1, voi
 
 			return curr;
 		}
+		curr = curr->next;
 	}
 	return NULL;
 }

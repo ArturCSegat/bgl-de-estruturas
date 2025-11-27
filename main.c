@@ -57,7 +57,7 @@ char desenha(const char* oq) {
     }
     else if (strcmp(oq, "remover_chamado") == 0) {
 	    printf("==== Removendo Chamado =====\n\n");
-	    printf("Entre com a descrição do chamado: ");
+	    printf("Entre com a descrição do chamado:\n");
 	    return 0;
     }
     else if (strcmp(oq, "ver_historico") == 0) {
@@ -344,7 +344,6 @@ int opcao_remover_chamado() {
 			if (item_node && item_node->tipo == Est) {
 				item_node->dados.item.quant -= chamado->itens[i].quant;
 			}
-			printf("%d\n", i);
 		}
 
 		chamado_n->tipo = HIST;

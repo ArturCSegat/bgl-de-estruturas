@@ -1,7 +1,6 @@
 #ifndef CHAMADO_C
 #define CHAMADO_C
 
-#include "tecnico.c"
 #include "item.c"
 #include "lista.c"
 #include "bst.c"
