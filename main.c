@@ -51,13 +51,19 @@ char desenha(const char* oq) {
 	printf("%s\n", suspenso_buf);
         
         printf("\n1 - Atualizar Chamado\n");
-        printf("\n2 - Voltar\n");
+        printf("\n2 - Apagar Chamado\n");
+        printf("\n3 - Voltar\n");
         printf("Opção: ");
         return ler_input_char();
     }
+    else if (strcmp(oq, "atualizar_chamado") == 0) {
+	    printf("==== Atualizando Chamado =====\n\n");
+	    printf("Entre com a descrição do chamado procurado:\n");
+	    return 0;
+    }
     else if (strcmp(oq, "remover_chamado") == 0) {
 	    printf("==== Removendo Chamado =====\n\n");
-	    printf("Entre com a descrição do chamado:\n");
+	    printf("Entre com a descrição do chamado procurado:\n");
 	    return 0;
     }
     else if (strcmp(oq, "ver_historico") == 0) {
@@ -154,7 +160,7 @@ int logica_busca_tecnico() {
 		printf("\nEncontrado:\n");
 		print_tecnico(res->dados.tecnico, &buf);
 		printf("%s\n", b);
-		free(buf);
+		free(b);
 	}
         else printf("\nNão encontrado.\n");
     }
@@ -323,11 +329,12 @@ int opcao_atender_chamado() {
     return VOLTOU;
 }
 
-int opcao_remover_chamado() {
-	desenha("remover_chamado");
+int opcao_atualizar_chamado() {
+	desenha("atualizar_chamado");
 	char desc[50];
 	ler_string(desc, 50);
 
+	// pode passar desc (char*) pq ela ja é o primeiro campo de Chamado então os primeiros 50 bytes de Chamado são iguais a desc
 	NodeLista * chamado_at = lista_pop(&lista_atendimento, desc, cmp_chamado);
 	NodeLista * chamado_sus = lista_pop(&lista_suspenso, desc, cmp_chamado);
 	NodeLista * chamado_n = chamado_at ? chamado_at : chamado_sus;
@@ -339,6 +346,17 @@ int opcao_remover_chamado() {
 	Chamado * chamado = (Chamado*) chamado_n->dados;
 
 	if (chamado_n->tipo == EM_AT) {
+		int valido = 1;
+		for (int i = 0; i < chamado->itens_len; i++) {
+			BstNode* item_node = bst_search(arvore_estoque, chamado->itens[i].nome);
+			if (!item_node || item_node->tipo != Est || item_node->dados.item.quant < chamado->itens[i].quant) {
+				printf("Item %s insuficiente no estoque. Chamado suspenso.\n", chamado->itens[i].nome);
+				valido = 0;
+				lista_suspenso = lista_add(lista_suspenso, (void*)chamado, SUSP);
+				goto fim_atualiza;
+			}
+		}
+
 		for (int i = 0; i<chamado->itens_len; i++) {
 			BstNode* item_node = bst_search(arvore_estoque, chamado->itens[i].nome);
 			if (item_node && item_node->tipo == Est) {
@@ -364,7 +382,32 @@ int opcao_remover_chamado() {
 		} else lista_suspenso = lista_add(lista_suspenso, (void*)chamado, SUSP);
 	}
 
+fim_atualiza:
 	printf("Chamado atualizado com sucesso.\n");
+	printf("Enter para continuar...");
+	ler_input_char();
+	return VOLTOU;
+}
+
+int opcao_remover_chamado() {
+	desenha("remover_chamado");
+	char desc[50];
+	ler_string(desc, 50);
+
+	// pode passar desc (char*) pq ela ja é o primeiro campo de Chamado então os primeiros 50 bytes de Chamado são iguais a desc
+	NodeLista * chamado_at = lista_pop(&lista_atendimento, desc, cmp_chamado);
+	NodeLista * chamado_sus = lista_pop(&lista_suspenso, desc, cmp_chamado);
+	NodeLista * chamado_n = chamado_at ? chamado_at : chamado_sus;
+	if (!chamado_n) {
+		printf("Chamado não encontrado\nEnter para continuar...\n");
+		ler_input_char();
+		return VOLTOU;
+	}
+	lista_pop(&((Chamado*)(chamado_n->dados))->tecnico->chamados, desc, cmp_chamado);
+
+	printf("Chamado %s removido com sucesso.\n", ((Chamado*)(chamado_n->dados))->desc);
+	free(chamado_n->dados);
+	free(chamado_n);
 	printf("Enter para continuar...");
 	ler_input_char();
 	return VOLTOU;
@@ -372,8 +415,9 @@ int opcao_remover_chamado() {
 
 int logica_visualizar_listas() {
     char op = desenha("visualizar_listas"); // Agora imprime dentro do desenha
-    if (op == '1') return opcao_remover_chamado();
-    if (op == '2') return VOLTOU;
+    if (op == '1') return opcao_atualizar_chamado();
+    if (op == '2') return opcao_remover_chamado();
+    if (op == '3') return VOLTOU;
     return logica_visualizar_listas();
 }
 

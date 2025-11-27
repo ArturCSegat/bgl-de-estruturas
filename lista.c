@@ -70,7 +70,10 @@ NodeLista * lista_pop(NodeLista ** head, void * needle, int (*cmp)(void* d1, voi
 			}
 
 			if(curr == *head) {
-				*head = NULL;
+				*head = curr->next;
+				if (*head) {
+					(**head).prev = NULL;
+				}
 			}
 
 			return curr;

@@ -118,6 +118,7 @@ int print_pq(Heap * h, char * to, int n) {
 		enq_pq(h, *p);
 		deq_q(f);
 	}
+	free_q(f);
 	return n;
 }
 #endif
