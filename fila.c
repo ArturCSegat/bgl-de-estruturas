@@ -2,11 +2,10 @@
 #define FILA_C
 #include <stdlib.h>
 #include <stdio.h>
-#include "pessoa.h"
-
+#include "chamado.h"
 
 typedef struct {
-    Pessoa p;
+    Chamado p;
     struct Node* next;
 } Node;
 
@@ -22,7 +21,7 @@ Fila * nova_fila() {
     return f;
 }
 
-void enq_q(Fila* f, Pessoa p) {
+void enq_q(Fila* f, Chamado p) {
     Node* newNode = (Node*)malloc(sizeof(Node));
     newNode->p = p;
     newNode->next = NULL;
@@ -48,7 +47,7 @@ int print_q(Fila * f, char * to, int n) {
 	Node* current = f->prim;
 	int count = 0;
 	while (current != NULL && count < n) {
-		count += sprintf(to + count, "%s", current->p.nome);
+		count += sprintf(to + count, "%s", current->p.desc);
 		if (current->next != NULL) count += sprintf(to + count, " -> ");
 		current = (Node*)current->next;
 	}
